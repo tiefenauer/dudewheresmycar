@@ -7,10 +7,12 @@ else {
 }
 
 var map;
-var service;
+var placesService;
+var directionsService, directionsDisplay;
 var markers = [];
 
 $("#park").click(park);
+$("#find").click(find);
 $("#gas").click(gasStations);
 $("#nearby").click(gasStations);
 
@@ -37,7 +39,10 @@ function initialize() {
     };
 
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    service = new google.maps.places.PlacesService(map);
+    placesService = new google.maps.places.PlacesService(map);
+    directionsService = new google.maps.DirectionsService();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);    
   });
 };
 

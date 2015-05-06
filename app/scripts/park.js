@@ -1,3 +1,7 @@
+var park = function(event){
+  navigator.geolocation.getCurrentPosition(geoSuccess, geoError);  
+}
+
 var geoSuccess = function(position){    
   save(position);
 };
@@ -9,10 +13,6 @@ var geoError = function(position){
   //   1: permission denied
   //   2: position unavailable (error response from location provider)
   //   3: timed out
-}
-
-var park = function(event){
-  navigator.geolocation.getCurrentPosition(geoSuccess, geoError);  
 }
 
 /**

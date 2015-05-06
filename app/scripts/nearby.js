@@ -10,7 +10,7 @@ var gasStations = function(){
 	 	,'gas_station'
 	 ]
 	}
-	service.nearbySearch(request, onGasStationsFound);
+	placesService.nearbySearch(request, onGasStationsFound);
 }
 
 var onGasStationsFound = function(results, status){
@@ -31,5 +31,5 @@ var createMarker = function(place) {
 };
 
 var getDetails = function(result){
-	service.getDetails({reference: result.reference});
+	placesService.getDetails({reference: result.reference});
 }
