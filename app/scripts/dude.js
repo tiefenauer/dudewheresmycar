@@ -13,14 +13,9 @@ var markers = [];
 
 $("#park").click(park);
 $("#find").click(find);
-$("#gas").click(gasStations);
-$("#nearby").click(gasStations);
-
-$("#track").click(function(event){
-  var watchId = navigator.geolocation.watchPosition(function(position){
-    console.log("Current position (lat/lng): " + position.coords.latitude + "/" + position.coords.longitude);
-  });
-});
+$("#gas").click(gas);
+$("#nearby").click(nearby);
+$("#track").click(track);
 
 
 
@@ -29,6 +24,9 @@ $("#track").click(function(event){
 * Google Maps stuff
 */
 function initialize() {
+  var positions = localStorage.getItem('positions');
+  if(!positions)
+    localStorage.setItem('positions', []);
   navigator.geolocation.getCurrentPosition(function(pos){
     var lat = pos.coords.latitude;
     var lng = pos.coords.longitude;
@@ -48,3 +46,26 @@ function initialize() {
 
 
 google.maps.event.addDomListener(window, 'load', initialize);
+
+// Sets the map on all markers in the array.
+function setAllMap(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+  setAllMap(null);
+}
+
+// Shows any markers currently in the array.
+function showMarkers() {
+  setAllMap(map);
+}
+
+// Deletes all markers in the array by removing references to them.
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
+}

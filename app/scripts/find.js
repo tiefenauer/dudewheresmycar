@@ -1,8 +1,21 @@
 var find = function(){
-  var position = getLatestPosition();
+  navigator.geolocation.getCurrentPosition(
+    // success
+    route
+    // error
+    ,function(position){
+      console.log('Error occurred. Error code: ' + error.code);
+    }
+  );  
 
-  var start = map.getCenter();
-  var end = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+}
+
+var route = function(currentPosition){  
+  var position = JSON.parse(localStorage.getItem('position'));
+
+  var start = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
+  start = map.getCenter();
+  var end = new google.maps.LatLng(position.latitude, position.longitude);
 
   directionsService.route({
     origin: start,
@@ -17,14 +30,16 @@ var onDirectionsResponse = function(response, status){
 
 var getLatestPosition = function(){
   var positions = loadPositions();
-  var keys = _.keys(positions);
-  var max = 0;
-   _.forEach(keys, function(key){
+  var max = _.max(positions, 'timestamp');
+  /*
+   _.forEach(positions, function(positions){
     if (parseInt(key) > max)
       max = parseInt(key);
    })
    if (max > 0)
-    return positions[max];
+    return positions[max];    
   return null;
+  */
+  return max;
 }
 

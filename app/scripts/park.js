@@ -1,18 +1,16 @@
 var park = function(event){
-  navigator.geolocation.getCurrentPosition(geoSuccess, geoError);  
-}
-
-var geoSuccess = function(position){    
-  save(position);
-};
-
-var geoError = function(position){
-  console.log('Error occurred. Error code: ' + error.code);
-  // error.code can be:
-  //   0: unknown error
-  //   1: permission denied
-  //   2: position unavailable (error response from location provider)
-  //   3: timed out
+  navigator.geolocation.getCurrentPosition(
+    // success
+    save
+    // error
+    // error.code can be:
+    //   0: unknown error
+    //   1: permission denied
+    //   2: position unavailable (error response from location provider)
+    //   3: timed out    
+    ,function(position){
+      console.log('Error occurred. Error code: ' + error.code);
+    });  
 }
 
 /**
@@ -22,13 +20,14 @@ var save = function(position){
   console.log("Latitude: " + position.coords.latitude);
   console.log("Latitude: " + position.coords.longitude);
 
-
-  var now = new Date();
-  setMarker(position, now);
-
+  setMarker(position);
+  localStorage.setItem('position', getStringRepresentation(position));
+  /*
   positions = loadPositions();
-  positions["" + now.getTime()] = position;
-  savePositions(positions);
+  positions.push(getStringRepresentation(position));
+  localStorage.setItem('positions', JSON.stringify(positions));  
+  console.log("Positions saved");
+  */
 }
 
 /**
@@ -42,24 +41,33 @@ var load = function(timestamp){
   return null;
 }
 
-var setMarker = function(position, date){
+var setMarker = function(position){
   var opts = {
     map: map,
-    position: map.getCenter(),
-    title: "Parked at " + date.toString('dd.MM.yyyy hh:mm:ss')
+    position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+    title: "Parked at " + new Date(position.timestamp).toUTCString()
   }
-  markers.push(new google.maps.Marker(opts));
+  var marker = new google.maps.Marker(opts);
+  google.maps.event.addListener(marker, 'click', function(){
+    new google.maps.InfoWindow({
+      content: '<h3>You parked your car here at ' + new Date(position.timestamp).toUTCString() + '</h3>'
+    }).open(map, marker);
+  })  
+  markers.push(marker);  
 }
 
 /**
 * Load positions from localStorage
 */
 var loadPositions = function(){
-  var positions = localStorage.getItem('positions') || "{}";
+  var positions = localStorage.getItem('positions') || '[]';
   return JSON.parse(positions);
 }
 
-var savePositions = function(positions){
-  localStorage.setItem('positions', JSON.stringify(positions));
-  console.log("Positions saved");
+var getStringRepresentation = function(position){
+  return JSON.stringify({
+    timestamp: position.timestamp,
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude
+  });
 }
